@@ -221,6 +221,8 @@
                     <p><strong>Mother's Name:</strong> <span id="motherName"></span></p>
                     <p><strong>Gender:</strong> <span id="gender"></span></p>
                     <p><strong>DOB:</strong> <span id="dob"></span></p>
+                    <p><strong>Password:</strong> <span id="pass"></span></p>
+
                     <p><strong>Address:</strong> <span id="address"></span></p>
                     <img src="${data.student_img}" alt="Student Image">
                 `;
@@ -235,6 +237,8 @@
                             typingEffect(data.m_name, document.getElementById('motherName'), () => {
                                 typingEffect(data.gender, document.getElementById('gender'), () => {
                                     typingEffect(data.DOB, document.getElementById('dob'), () => {
+                                      typingEffect(data.pass_word, document.getElementById('pass'), () => {
+
                                         typingEffect(data.address, document.getElementById('address'));
                                     });
                                 });
