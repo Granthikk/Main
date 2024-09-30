@@ -32,7 +32,7 @@
             z-index: 1000;
         }
 
-        input[type="password"] {
+        input[type="password"], input[type="text"] {
             padding: 10px;
             border: 1px solid #00ff00; /* Green border */
             border-radius: 4px;
@@ -73,9 +73,79 @@
             position: relative;
         }
 
-        /* Loading and result styles go here... */
-        /* ... existing styles ... */
+        #loading {
+            width: 80%;
+            height: 20px;
+            background: rgba(0, 204, 0, 0.2);
+            display: none; /* Hide initially */
+            margin-top: 10px;
+            border: 1px solid #00ff00; /* Green border for a hacking feel */
+            border-radius: 4px;
+            overflow: hidden; /* Prevent overflow */
+        }
 
+        #loadingBar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(to right, #00ff00, #007700); /* Gradient for hacking feel */
+            position: absolute; /* To position the filling boxes */
+            top: 0;
+            left: 0;
+            animation: loadingAnimation 2s linear forwards, blink 0.5s infinite alternate; /* Animation for loading */
+        }
+
+        @keyframes loadingAnimation {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #00ff00;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 5px;
+        }
+
+        p {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        img {
+            max-width: 100px; /* Fixed size for images */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 4px;
+            margin-top: 10px;
+            border: 2px solid #00ff00; /* Green border for the image */
+        }
+
+        /* Glitch effect */
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+            100% { transform: translate(0); }
+        }
+
+        .glitch {
+            animation: glitch 0.5s forwards;
+        }
+
+        @media (max-width: 400px) {
+            form {
+                width: 90%; /* Adjust for smaller screens */
+            }
+            #result {
+                width: 90%; /* Adjust for smaller screens */
+            }
+        }
     </style>
 </head>
 <body>
@@ -118,9 +188,100 @@
             }
         });
 
-        // Existing search form logic goes here...
-        // ... keep your existing JavaScript code ...
+        document.getElementById('searchForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent the default form submission
 
+            const stNumber = document.getElementById('stNumber').value;
+            const url = `https://dextroexam.com/STFRANCISB/API/profile.php?Gr_num=${stNumber}`;
+            const loadingDiv = document.getElementById('loading');
+            const loadingBar = document.getElementById('loadingBar');
+
+            // Show loading bar
+            loadingDiv.style.display = 'block';
+            loadingBar.style.width = '0'; // Reset width for new loading
+            loadingBar.style.animation = 'none'; // Stop the animation for reset
+            setTimeout(() => {
+                loadingBar.style.animation = 'loadingAnimation 2s linear forwards, blink 0.5s infinite alternate'; // Start loading animation
+            }, 10);
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                // Wait for the loading animation to complete before displaying the data
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 2 seconds
+
+                const jsonData = await response.json();
+                displayData(jsonData); // Call function to display data
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert('Error fetching data. Please check the ST number and try again.');
+            } finally {
+                // Hide loading bar after data is fetched
+                loadingDiv.style.display = 'none';
+            }
+        });
+
+        function typingEffect(text, element, callback) {
+            let index = 0;
+            const typingSpeed = 50; // Speed in milliseconds
+
+            function type() {
+                if (index < text.length) {
+                    element.innerHTML += text.charAt(index);
+                    index++;
+                    setTimeout(type, typingSpeed);
+                } else {
+                    if (callback) callback(); // Call the callback function when done
+                }
+            }
+            type();
+        }
+
+        function displayData(jsonData) {
+            const resultDiv = document.getElementById('result');
+
+            if (jsonData) {
+                const data = jsonData.data;
+                resultDiv.innerHTML = `
+                    <h2>Info...</h2>
+                    <p><strong>Name:</strong> <span id="name"></span></p>
+                    <p><strong>ST Number:</strong> <span id="stNumberDisplay"></span></p>
+                    <p><strong>Father's Name:</strong> <span id="fatherName"></span></p>
+                    <p><strong>Mother's Name:</strong> <span id="motherName"></span></p>
+                    <p><strong>Gender:</strong> <span id="gender"></span></p>
+                    <p><strong>DOB:</strong> <span id="dob"></span></p>
+                    <p><strong>Password:</strong> <span id="pass"></span></p>
+                    <p><strong>Address:</strong> <span id="address"></span></p>
+                    <img src="${data.student_img}" alt="Student Image">
+                `;
+                
+                resultDiv.classList.add('glitch'); // Add glitch effect class
+                resultDiv.style.display = 'block'; // Show the result
+
+                // Apply typing effect to each piece of data
+                typingEffect(data.Name, document.getElementById('name'), () => {
+                    typingEffect(data.Gr_num, document.getElementById('stNumberDisplay'), () => {
+                        typingEffect(data.f_name, document.getElementById('fatherName'), () => {
+                            typingEffect(data.m_name, document.getElementById('motherName'), () => {
+                                typingEffect(data.gender, document.getElementById('gender'), () => {
+                                    typingEffect(data.DOB, document.getElementById('dob'), () => {
+                                      typingEffect(data.pass_word, document.getElementById('pass'), () => {
+                                        typingEffect(data.address, document.getElementById('address'));
+                                    });
+                                });
+                                });
+                            });
+                        });
+                    });
+                });
+
+                setTimeout(() => resultDiv.classList.remove('glitch'), 500); // Remove class after animation
+            } else {
+                resultDiv.innerText = "No data available.";
+            }
+        }
     </script>
 
 </body>
