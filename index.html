@@ -157,22 +157,33 @@
     <div id="result"></div>
 
     <script>
-        const correctPassword = 'admin85';
+        const encodedPassword = 'YWRtaW485'; // Base64 encoded "admin85"
+        const maxAttempts = 3; // Maximum password attempts
+        let attempts = 0;
+
+        function decodePassword(encoded) {
+            return atob(encoded); // Decode base64
+        }
 
         function askForPassword() {
             let password = '';
-            while (password !== correctPassword) {
+            while (attempts < maxAttempts) {
                 password = prompt('Please enter the password:');
                 if (password === null) {
-                    // User pressed Cancel
                     alert('Access denied.');
                     window.location.reload(); // Reload the page
+                    return;
                 }
-                if (password !== correctPassword) {
-                    alert('Incorrect password, please try again.');
+                if (password === decodePassword(encodedPassword)) {
+                    document.getElementById('searchForm').style.display = 'block'; // Show the form
+                    return;
+                } else {
+                    attempts++;
+                    alert(`Incorrect password, ${maxAttempts - attempts} attempts left.`);
                 }
             }
-            document.getElementById('searchForm').style.display = 'block'; // Show the form after correct password
+            alert('Too many incorrect attempts. Access denied.');
+            window.location.reload(); // Reload the page after too many attempts
         }
 
         window.onload = askForPassword; // Ask for password when the page loads
@@ -257,11 +268,10 @@
                             typingEffect(data.m_name, document.getElementById('motherName'), () => {
                                 typingEffect(data.gender, document.getElementById('gender'), () => {
                                     typingEffect(data.DOB, document.getElementById('dob'), () => {
-                                      typingEffect(data.pass_word, document.getElementById('pass'), () => {
-
-                                        typingEffect(data.address, document.getElementById('address'));
+                                        typingEffect(data.pass_word, document.getElementById('pass'), () => {
+                                            typingEffect(data.address, document.getElementById('address'));
+                                        });
                                     });
-                                });
                                 });
                             });
                         });
