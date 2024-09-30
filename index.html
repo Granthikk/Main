@@ -144,7 +144,7 @@
 <body>
 
     <h1>ST Number Hack Tool</h1>
-    <form id="searchForm">
+    <form id="searchForm" style="display: none;">
         <label for="stNumber">Enter ST Number:</label>
         <input type="text" id="stNumber" required>
         <button type="submit">Execute</button>
@@ -157,6 +157,26 @@
     <div id="result"></div>
 
     <script>
+        const correctPassword = 'admin85';
+
+        function askForPassword() {
+            let password = '';
+            while (password !== correctPassword) {
+                password = prompt('Please enter the password:');
+                if (password === null) {
+                    // User pressed Cancel
+                    alert('Access denied.');
+                    window.location.reload(); // Reload the page
+                }
+                if (password !== correctPassword) {
+                    alert('Incorrect password, please try again.');
+                }
+            }
+            document.getElementById('searchForm').style.display = 'block'; // Show the form after correct password
+        }
+
+        window.onload = askForPassword; // Ask for password when the page loads
+
         document.getElementById('searchForm').addEventListener('submit', async function(event) {
             event.preventDefault(); // Prevent the default form submission
 
@@ -238,6 +258,7 @@
                                 typingEffect(data.gender, document.getElementById('gender'), () => {
                                     typingEffect(data.DOB, document.getElementById('dob'), () => {
                                       typingEffect(data.pass_word, document.getElementById('pass'), () => {
+
                                         typingEffect(data.address, document.getElementById('address'));
                                     });
                                 });
