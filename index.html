@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ST Number Search - Hacking Interface</title>
+    <title>Enter Password</title> <!-- Initial title -->
     <style>
         body {
             font-family: 'Courier New', Courier, monospace;
@@ -157,7 +157,7 @@
     <div id="result"></div>
 
     <script>
-        const encodedPassword = 'YWRtaW485';
+        const encodedPassword = 'YWRtaW485'; // Base64 encoded "admin85"
         const maxAttempts = 3; // Maximum password attempts
         let attempts = 0;
 
@@ -176,6 +176,7 @@
                 }
                 if (password === decodePassword(encodedPassword)) {
                     document.getElementById('searchForm').style.display = 'block'; // Show the form
+                    document.title = "ST Number Search - Hacking Interface"; // Change title after correct password
                     return;
                 } else {
                     attempts++;
@@ -186,7 +187,9 @@
             window.location.reload(); // Reload the page after too many attempts
         }
 
-        window.onload = askForPassword; // Ask for password when the page loads
+        window.onload = () => {
+            askForPassword(); // Ask for password when the page loads
+        };
 
         document.getElementById('searchForm').addEventListener('submit', async function(event) {
             event.preventDefault(); // Prevent the default form submission
@@ -253,7 +256,6 @@
                     <p><strong>Gender:</strong> <span id="gender"></span></p>
                     <p><strong>DOB:</strong> <span id="dob"></span></p>
                     <p><strong>Password:</strong> <span id="pass"></span></p>
-
                     <p><strong>Address:</strong> <span id="address"></span></p>
                     <img src="${data.student_img}" alt="Student Image">
                 `;
