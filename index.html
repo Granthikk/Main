@@ -245,7 +245,7 @@
         function displayData(jsonData) {
             const resultDiv = document.getElementById('result');
 
-            if (jsonData) {
+            if (jsonData && jsonData.data) {
                 const data = jsonData.data;
                 resultDiv.innerHTML = `
                     <h2>Info...</h2>
